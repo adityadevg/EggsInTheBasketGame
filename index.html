@@ -16,9 +16,14 @@
 	</head>
 	<body>
 		<center>
+			<img id = "banner" src = "img/banner.png" width = "75%"></img>
+			<br>
+			<br>
+			<h3>Use left-right arrows to catch maximum eggs in the basket</h3>
+			<p>You have <div id = "timer">30</div> seconds left</p>
 			<button id="start" onclick="resetGame()">Reset Game</button><br>
-			<h4>Use left-right arrows to catch maximum eggs in the basket</h4>
-			<h4>You have <div id = "timer">30</div> seconds left</h4>
+			<br>
+			<br>
 			<canvas id="gameCanvas" width=500 height=500></canvas>
 		</center>
 		<script type="text/javascript">
@@ -50,7 +55,8 @@
 					if (timerCount !== 0) {
 						$(this).html(timerCount - 1);
 					} else {
-						alert("Time up!");
+						var alertContent = "Time up! You were able to catch " + scoreCount + " eggs in 30 seconds!";
+						alert(alertContent);
 						clearInterval(updateTimer);
 						resetGame();
 					}
