@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+	<head>
+		<title>Egg Catcher by Aditya Dev</title>
+		<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+		<meta content="utf-8" http-equiv="encoding">
+		
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+		
+		<style>
+			canvas {
+    			border:1px solid #d3d3d3;
+    			background-color: #f1f1f1;
+			}
+		</style>
+	</head>
+	<body>
+		<center>
+			<button id="start" onclick="resetGame()">Reset Game</button><br>
+			<h4>Use left-right arrows to catch maximum eggs in the basket</h4>
+			<h4>You have <div id = "timer">30</div> seconds left</h4>
+			<canvas id="gameCanvas" width=500 height=500></canvas>
+		</center>
+		<script type="text/javascript">
+			document.addEventListener("keydown",keyDownHandler, false);
+			
+			var canvas = document.getElementById("gameCanvas");
+			var ctx = canvas.getContext("2d");
+			var startLine = 25;
+			var rateOfEggFall = 1500;
+			var speed = 1;
+			var lastSpawn = -1;
+			var eggs = [];
+			var basket = {
+			    type: "brown",
+			    x: 50,
+			    y: canvas.height - 30,
+			}
+			var scoreCount = 0;
+			var timerCount;
+
+			var startTime = Date.now();
+
+			refreshScreen();
+			drawBasket();
+
+			var updateTimer = function() {
+				$('#timer').each(function() {
+					timerCount = parseInt($(this).html());
+					if (timerCount !== 0) {
+						$(this).html(timerCount - 1);
+					} else {
+						alert("Time up!");
+						clearInterval(updateTimer);
+						resetGame();
+					}
+				});
+			};
+			setInterval(updateTimer, 1000);
+
+			function refreshScreen() {
+			    var time = Date.now();
+			    if (time > (lastSpawn + rateOfEggFall)) {
+			        lastSpawn = time;
+			        drawEggs();
+			    }
+
+			    requestAnimationFrame(refreshScreen);
+			    ctx.clearRect(0, 0, canvas.width, canvas.height);
+			    ctx.beginPath();
+			    ctx.moveTo(0, startLine);
+			    ctx.lineTo(canvas.width, startLine);
+			    ctx.stroke();
+
+			    for (var i = 0; i < eggs.length; i++) {
+			        var egg = eggs[i];
+			        egg.y += speed;
+			        ctx.beginPath();
+			        ctx.arc(egg.x, egg.y, 10, 0, Math.PI * 2);
+			        ctx.closePath();
+			        ctx.fillStyle = egg.type;
+			        ctx.fill();
+      			    if (eggInBasket(egg, basket)){
+				    	scoreCount++;
+				    	resetEgg(egg);
+				    }
+				    if (egg.y > canvas.height) {
+            			resetEgg(egg);
+        			}
+        			if (timerCount <= 0){
+        				var result;
+        			}
+			    }
+
+
+			    ctx.font = "14px Times New Roman";
+    			ctx.fillStyle = "black";
+    			ctx.fillText("Score: " + scoreCount, 10, 15);
+			}
+
+			function resetEgg(egg){
+				egg.x = Math.random() * (canvas.width - 10) + 5;
+    			egg.y = startLine;
+			}
+
+			function resetGame(){
+				history.go(0);
+			}
+
+			function eggInBasket(egg, basket){
+				return !(basket.x > egg.x + 20 || basket.x + 150 < egg.x || basket.y > egg.y + 20 || basket.y + 30 < egg.y);
+			}
+
+			function drawEggs() {
+			    var t;
+			    var randColor = Math.random()
+			    if (randColor < 0.25) {
+			        t = "blue";
+			    } else if (randColor >= 0.25 && randColor < 0.5) {
+			        t = "green";
+			    } else if (randColor >= 0.5 && randColor < 0.75) {
+			        t = "red";
+			    } else {
+			        t = "brown";
+			    }
+
+			    var egg = {
+			        type: t,
+			        x: Math.random() * (canvas.width - 10) + 5,
+			        y: startLine,
+			    }
+			    eggs.push(egg);
+			}
+
+			function drawBasket() {
+			    requestAnimationFrame(drawBasket);
+
+			    ctx.beginPath();
+				ctx.fillStyle = basket.type;
+				ctx.rect(basket.x, basket.y, 150, 30);
+				ctx.fill();
+			}
+
+			function keyDownHandler(event) {
+				if (event.keyCode == '37') {
+					basket.x = basket.x - 10;
+					drawBasket();
+				} else if (event.keyCode == '39') {	
+					basket.x = basket.x + 10;
+					drawBasket();
+				}
+			}
+		</script>
+	</body>
+</html>
