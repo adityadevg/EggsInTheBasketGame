@@ -7,21 +7,23 @@
 		
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 		
-		<style>
-			canvas {
-    			border:1px solid #d3d3d3;
-    			background-color: #f1f1f1;
-			}
-		</style>
+
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+		<link rel="stylesheet" href="css/index.css">
 	</head>
-	<body>
+	<body onresize="resize_canvas()">
 		<center>
-			<img id = "banner" src = "img/banner.png" width = "75%"></img>
+			<img id="banner" src="img/banner.png" width="75%"></img>
 			<br>
 			<br>
 			<h3>Use left-right arrows to catch maximum eggs in the basket</h3>
 			<p>You have <div id = "timer">30</div> seconds left</p>
-			<button id="start" onclick="resetGame()">Reset Game</button><br>
+			<button class="btn btn-info" id="start" onclick="resetGame()">Reset Game</button><br>
 			<br>
 			<br>
 			<canvas id="gameCanvas" width=500 height=500></canvas>
@@ -31,6 +33,7 @@
 			
 			var canvas = document.getElementById("gameCanvas");
 			var ctx = canvas.getContext("2d");
+			resize_canvas();
 			var startLine = 25;
 			var rateOfEggFall = 1500;
 			var speed = 1;
@@ -64,6 +67,10 @@
 			};
 			setInterval(updateTimer, 1000);
 
+			function resize_canvas(){
+				ctx.canvas.width  = window.innerWidth / 2;
+			}
+
 			function refreshScreen() {
 			    var time = Date.now();
 			    if (time > (lastSpawn + rateOfEggFall)) {
@@ -88,6 +95,7 @@
 			        ctx.fill();
       			    if (eggInBasket(egg, basket)){
 				    	scoreCount++;
+				    	basket.type = egg.type;
 				    	resetEgg(egg);
 				    }
 				    if (egg.y > canvas.height) {
